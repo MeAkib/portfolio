@@ -10,15 +10,16 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "paths": {
-      "@akib/util": ["./libs/util/src/index.ts"],
-      "@akib/content": ["./libs/content/src/index.ts"],
-      "@akib/ui": ["./libs/ui/src/index.ts"],
-      "@akib/models": ["./libs/models/src/index.ts"]
-    }
+    "paths": {}
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

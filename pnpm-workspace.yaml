@@ -1,0 +1,16 @@
+# pnpm 11 reads its settings from this file, not from a "pnpm" key in
+# package.json. https://pnpm.io/settings
+#
+# These packages run a script at install time — esbuild and @swc/core
+# unpack a native binary, lmdb and msgpackr-extract compile one, nx and
+# @parcel/watcher set up their file watcher. pnpm refuses to run install
+# scripts that have not been approved, so they are listed here once
+# instead of being an interactive prompt that CI can never answer.
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@swc/core'
+  - esbuild
+  - lmdb
+  - msgpackr-extract
+  - nx
+  - unrs-resolver

@@ -41,9 +41,6 @@ importers:
       rxjs:
         specifier: ~7.8.0
         version: 7.8.2
-      zone.js:
-        specifier: 0.16.2
-        version: 0.16.2
     devDependencies:
       '@analogjs/vite-plugin-angular':
         specifier: 2.6.3
@@ -16124,4 +16121,5 @@ snapshots:
 
   zod@4.6.2: {}
 
-  zone.js@0.16.2: {}
+  zone.js@0.16.2:
+    optional: true

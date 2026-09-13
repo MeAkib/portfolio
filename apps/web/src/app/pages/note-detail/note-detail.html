@@ -1,0 +1,48 @@
+@if (post; as article) {
+  <article>
+    <header class="article-head">
+      <p class="label article-head__category">{{ article.category }}</p>
+      <h1>{{ article.title }}</h1>
+      <p class="lede article-head__deck">{{ article.description }}</p>
+      <p class="mono article-head__meta">
+        {{ article.publishedAt | date: 'd MMMM y' }}
+        &middot; {{ article.readingTime }} min read
+        @if (article.updatedAt) {
+          &middot; updated {{ article.updatedAt | date: 'd MMMM y' }}
+        }
+      </p>
+    </header>
+
+    <div class="prose article-body" [innerHTML]="article.body"></div>
+
+    <footer class="article-foot">
+      <div class="tag-row">
+        @for (tag of article.tags; track tag) {
+          <span class="tag">{{ tag }}</span>
+        }
+      </div>
+      <p class="sans byline">
+        <strong>{{ profile.name }}</strong> — {{ profile.role }} at
+        {{ profile.current.company }}. {{ profile.location }}.
+      </p>
+    </footer>
+
+    <section class="related">
+      <p class="label">Read next</p>
+      <div class="related__grid">
+        @for (other of related; track other.slug) {
+          <a class="related__card" [routerLink]="['/notes', other.slug]">
+            <span class="label related__category">{{ other.category }}</span>
+            <span class="related__title">{{ other.title }}</span>
+            <span class="mono related__time">{{ other.readingTime }} min read</span>
+          </a>
+        }
+      </div>
+    </section>
+  </article>
+} @else {
+  <div class="page-head">
+    <h1>Article not found</h1>
+    <p class="lede"><a routerLink="/notes">Back to all notes</a></p>
+  </div>
+}

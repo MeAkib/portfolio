@@ -1,0 +1,45 @@
+@if (study; as item) {
+  <article>
+    <header class="study-head">
+      <div class="study-head__main">
+        <p class="label"><a routerLink="/work">Work</a> / Case study</p>
+        <h1>{{ item.title }}</h1>
+        <p class="lede">{{ item.description }}</p>
+      </div>
+      <aside class="study-head__facts">
+        <div class="fact"><span class="label">Role</span><span class="sans">{{ item.role }}</span></div>
+        <div class="fact"><span class="label">Company</span><span class="sans">{{ item.company }}</span></div>
+        <div class="fact"><span class="label">Period</span><span class="sans">{{ item.period }}</span></div>
+        <div class="fact fact--stack">
+          <span class="label">Stack</span>
+          <div class="tag-row">
+            @for (tech of item.stack; track tech) {
+              <span class="tag">{{ tech }}</span>
+            }
+          </div>
+        </div>
+      </aside>
+    </header>
+
+    @if (item.underNda) {
+      <p class="nda-note sans">
+        The client cannot be named and the screens cannot be shown. Everything
+        below describes engineering decisions that are mine to describe.
+      </p>
+    }
+
+    <div class="prose" [innerHTML]="item.body"></div>
+
+    @if (next; as nextItem) {
+      <nav class="next">
+        <span class="label">Next case study</span>
+        <a [routerLink]="['/work', nextItem.slug]">{{ nextItem.title }}</a>
+      </nav>
+    }
+  </article>
+} @else {
+  <div class="page-head">
+    <h1>Case study not found</h1>
+    <p class="lede"><a routerLink="/work">Back to all work</a></p>
+  </div>
+}

@@ -1,0 +1,35 @@
+<header class="page-head">
+  <p class="label">Contributions</p>
+  <h1>Open source</h1>
+  <p class="lede">
+    I contribute to the Angular framework while working full time — mostly
+    documentation, accessibility and developer-experience work in the docs
+    application. {{ profile.openSource.summary }}.
+  </p>
+</header>
+
+@if (isPlaceholder) {
+  <p class="placeholder mono">
+    These rows are placeholders. Replace them in
+    <code>core/content/open-source.ts</code> with your real merged pull requests.
+  </p>
+}
+
+<div class="stack">
+  @for (pr of prs; track pr.url + pr.title) {
+    <article class="pr">
+      <span class="mono pr__date">{{ pr.mergedAt | date: 'd MMM y' }}</span>
+      <div class="pr__main">
+        <a class="pr__title" [href]="pr.url">{{ pr.title }}</a>
+        <span class="mono pr__repo">{{ pr.repo }}</span>
+      </div>
+      <span class="mono pr__state">merged</span>
+    </article>
+  }
+</div>
+
+<p class="sans note">
+  This page is built from a file in the repository, not from the GitHub API. A
+  visitor loading the page never waits on GitHub, and an outage there cannot
+  break a page here.
+</p>

@@ -1,16 +1,23 @@
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="site-header">
-  <a class="site-name" routerLink="/">Shuaib Hasan Akib</a>
-  <nav aria-label="Primary">
-    <a routerLink="/">Home</a>
-  </nav>
-</header>
+<div class="page">
+  <header class="site-header">
+    <a class="site-name" routerLink="/">Shuaib Hasan Akib</a>
+    <nav class="site-nav" aria-label="Primary">
+      <a routerLink="/work" routerLinkActive="active">Work</a>
+      <a routerLink="/open-source" routerLinkActive="active">Open Source</a>
+      <a routerLink="/notes" routerLinkActive="active">Notes</a>
+      <a routerLink="/about" routerLinkActive="active">About</a>
+      <a routerLink="/contact" routerLinkActive="active">Contact</a>
+    </nav>
+  </header>
 
-<main id="main">
-  <router-outlet></router-outlet>
-</main>
+  <main id="main">
+    <router-outlet></router-outlet>
+  </main>
 
-<footer class="site-footer">
-  <p>&copy; 2026 Shuaib Hasan Akib</p>
-</footer>
+  <footer class="site-footer">
+    <span>&copy; 2026 Shuaib Hasan Akib</span>
+    <span><a href="/feed.xml">RSS</a> &middot; <a href="mailto:akibh805@gmail.com">akibh805&#64;gmail.com</a></span>
+  </footer>
+</div>

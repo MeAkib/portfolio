@@ -1,9 +1,5 @@
-/**
- * One article. Built from a markdown file in content/blog at build time —
- * nothing here is fetched at runtime.
- */
+/** One article, shown on /notes and /notes/:slug. */
 export interface BlogPost {
-  /** Comes from the filename. Never written by hand, never changed after publishing. */
   slug: string;
   title: string;
   description: string;
@@ -12,9 +8,8 @@ export interface BlogPost {
   /** ISO date, e.g. 2026-03-12 */
   publishedAt: string;
   updatedAt?: string;
-  coverImage?: string;
-  /** Minutes, calculated from the word count. */
+  /** Minutes. */
   readingTime: number;
-  /** Markdown already rendered to HTML at build time. */
-  html: string;
+  /** The article body, as HTML. */
+  body: string;
 }

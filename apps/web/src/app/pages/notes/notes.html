@@ -1,0 +1,24 @@
+<header class="page-head">
+  <p class="label">Writing</p>
+  <h1>Notes</h1>
+  <p class="lede">
+    Short pieces about Angular architecture, performance, and the parts of
+    open-source work nobody writes down.
+  </p>
+</header>
+
+<div class="stack">
+  @for (post of posts; track post.slug) {
+    <article class="entry">
+      <div class="entry__meta">
+        <p class="mono">{{ post.publishedAt | date: 'd MMM y' }}</p>
+        <p class="label entry__category">{{ post.category }}</p>
+      </div>
+      <div class="entry__main">
+        <h2><a [routerLink]="['/notes', post.slug]">{{ post.title }}</a></h2>
+        <p class="sans entry__summary">{{ post.description }}</p>
+        <p class="mono entry__time">{{ post.readingTime }} min read</p>
+      </div>
+    </article>
+  }
+</div>

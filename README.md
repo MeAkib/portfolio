@@ -1,8 +1,8 @@
 # Shuaib Hasan Akib — portfolio
 
-One Angular application, prerendered to static HTML at build time. That is
-the whole system. There is no API and no database: contact is a direct email
-address and a LinkedIn link.
+One Angular application, prerendered to static HTML at build time. That is the
+whole system: no API, no database. Contact is a direct email address and a
+LinkedIn link.
 
 ## Requirements
 
@@ -22,37 +22,73 @@ pnpm dev        # http://localhost:4200
 | --- | --- |
 | `pnpm dev` | Serve the site locally |
 | `pnpm build` | Build and prerender into `dist/apps/web/browser` |
-| `pnpm test` | Run the tests |
+| `pnpm test` | Run the content tests |
 | `pnpm lint` | Lint |
 
-## Layout
+## Where things are
 
 ```
-apps/web/src/app/
-├── app.ts, app.html        the shell: header, router outlet, footer
-├── app.routes.ts           the routes
-├── app.routes.server.ts    how each route is rendered (all prerendered today)
-├── core/models/            BlogPost, CaseStudy, OpenSourcePr
-└── pages/                  one folder per page
-
-content/
-├── blog/                   articles, as markdown (pipeline comes later)
-└── work/                   case studies, as markdown
+apps/web/src/
+├── styles.css                 design tokens — every colour and size starts here
+├── index.html
+└── app/
+    ├── app.ts/html/css        the shell: header, router outlet, footer
+    ├── app.routes.ts          the routes
+    ├── app.routes.server.ts   how each route renders (all prerendered today)
+    ├── core/
+    │   ├── content/           ← THE FILES YOU EDIT
+    │   │   ├── profile.ts     your name, role, links, focus areas
+    │   │   ├── case-studies.ts
+    │   │   ├── posts.ts       articles
+    │   │   └── open-source.ts merged pull requests
+    │   ├── models/            the shapes those files must match
+    │   └── seo.service.ts     title, meta, canonical, JSON-LD
+    └── pages/                 one folder per page
 ```
 
-It is deliberately flat. Nothing is split into a library until two different
-places actually need it — at that point `nx g @nx/js:lib` takes one command.
+## Editing the site
+
+Everything you will want to change is in `app/core/content/`.
+
+- **Your details, the hero, the focus strip** — `profile.ts`.
+- **Add a case study** — add an object to the array in `case-studies.ts`. The
+  list page, the detail page and the prerendered routes all pick it up.
+- **Add an article** — add an object to the array in `posts.ts`, newest first.
+- **Open-source list** — `open-source.ts`. Those rows are placeholders today;
+  replace them with your real merged PRs.
+
+`body` is plain HTML in both `case-studies.ts` and `posts.ts`. When the writing
+gets frequent this is the point to swap in a markdown pipeline — the page
+components will not need to change, only the file that feeds them.
+
+## What the tests check
+
+`pnpm test` validates the content, not the code: unique url-safe slugs, no
+missing titles or descriptions, valid dates, no article updated before it was
+published, and posts in newest-first order. A content mistake fails the build
+instead of shipping a broken page.
 
 ## Rendering
 
-`app.routes.server.ts` decides how each route renders. Today everything is
-`RenderMode.Prerender`, so the build produces plain HTML files and the site
-needs no server at all. SSR is already wired up, so moving one route to
-`RenderMode.Server` later is a one-line change.
+`app.routes.server.ts` decides how each route renders. Everything is
+`RenderMode.Prerender`, so `pnpm build` writes a real HTML file per page and the
+site deploys as static files with no server. SSR is wired up but unused —
+switching one route to `RenderMode.Server` later is a one-line change.
 
-CI checks that the built HTML actually contains page text. The previous
-version of this site shipped a page that said only "Loading" to search
-engines; that cannot happen again without failing the build.
+The app runs **zoneless**, so `zone.js` is not shipped at all.
+
+CI checks that the built HTML actually contains page text. The previous version
+of this site shipped a page that said only "Loading" to search engines; that
+cannot happen again without failing the build.
+
+## Before going live
+
+- Set `siteUrl` in `core/content/profile.ts` — canonical URLs and Open Graph
+  tags use it.
+- Replace the LinkedIn URL in the same file.
+- Replace the placeholder rows in `core/content/open-source.ts`.
+- Fonts load from Google Fonts via a `<link>` in `index.html`. Self-hosting them
+  as woff2 is a small, worthwhile improvement once the design is settled.
 
 ## Deployment
 

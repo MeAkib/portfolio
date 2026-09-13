@@ -1,66 +1,75 @@
-.app-header {
-  background: #2c3e50;
-  color: white;
-  padding: 1rem 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--accent);
+  color: var(--paper);
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-ui);
+  z-index: 10;
 }
 
-.app-header .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
+.skip-link:focus {
+  left: var(--gutter);
+  top: var(--space-2);
+}
+
+.site-header {
   display: flex;
+  align-items: baseline;
   justify-content: space-between;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-5);
+  padding-block: var(--space-5);
+  border-bottom: 1px solid var(--ink);
 }
 
-.app-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
+.site-name {
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--ink);
 }
 
-.app-header nav {
-  display: flex;
-  gap: 24px;
-}
-
-.app-header nav a {
-  color: white;
+.site-name:hover {
+  color: var(--ink);
   text-decoration: none;
-  font-size: 1rem;
-  padding: 8px 16px;
-  border-radius: 4px;
-  transition: background 0.3s;
 }
 
-.app-header nav a:hover {
-  background: rgba(255, 255, 255, 0.1);
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
 }
 
-.app-header nav a.active {
-  background: #3498db;
+.site-nav a.active {
+  color: var(--ink);
+  border-bottom: 1px solid var(--ink);
 }
 
-.app-main {
-  min-height: calc(100vh - 140px);
-  background: #f5f5f5;
+main {
+  display: block;
+  min-height: 60vh;
 }
 
-.app-footer {
-  background: #34495e;
-  color: white;
-  padding: 24px 0;
-  text-align: center;
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-block: var(--space-6) var(--space-7);
+  margin-top: var(--space-8);
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  color: var(--ink-faint);
 }
 
-.app-footer .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
-
-.app-footer p {
-  margin: 8px 0;
-  font-size: 0.9rem;
+.site-footer a {
+  color: var(--ink-faint);
 }

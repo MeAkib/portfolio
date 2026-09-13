@@ -1,5 +1,128 @@
-<h1>Shuaib Hasan Akib</h1>
-<p>
-  I specialize in large Angular applications — architecture, performance, and
-  the design systems that hold them together.
-</p>
+<section class="hero">
+  <div class="hero__main">
+    <p class="label">{{ profile.role }} &middot; {{ profile.location }}</p>
+    <h1>{{ profile.name }}</h1>
+    <p class="hero__specialism">{{ profile.specialism }}</p>
+    <p class="hero__summary">{{ profile.summary }}</p>
+  </div>
+
+  <aside class="hero__aside">
+    <p class="label">Currently</p>
+    <dl class="facts">
+      <div class="facts__row">
+        <dt>{{ profile.current.company }}</dt>
+        <dd>{{ profile.current.title }} &middot; since {{ profile.current.since }}</dd>
+      </div>
+      <div class="facts__row">
+        <dt>{{ profile.openSource.project }} &middot; open source</dt>
+        <dd>{{ profile.openSource.summary }}</dd>
+      </div>
+      <div class="facts__row">
+        <dt>Writing</dt>
+        <dd>Notes on Angular architecture and performance</dd>
+      </div>
+    </dl>
+    <div class="hero__links">
+      <a class="button" [href]="'mailto:' + profile.email">{{ profile.email }}</a>
+      <a class="button button--quiet" [href]="profile.github" rel="me">GitHub</a>
+    </div>
+  </aside>
+</section>
+
+<section class="focus">
+  @for (item of profile.focus; track item.title) {
+    <div class="focus__item">
+      <p class="label">{{ item.title }}</p>
+      <p class="sans focus__detail">{{ item.detail }}</p>
+    </div>
+  }
+</section>
+
+<section class="block">
+  <div class="section-head">
+    <h2>Selected work</h2>
+    <a class="sans" routerLink="/work">All case studies</a>
+  </div>
+
+  <div class="stack">
+    @for (item of work; track item.slug) {
+      <article class="work-row">
+        <p class="mono work-row__year">{{ item.year }}</p>
+        <div class="work-row__main">
+          <h3><a [routerLink]="['/work', item.slug]">{{ item.title }}</a></h3>
+          <p class="sans work-row__summary">{{ item.summary }}</p>
+        </div>
+        <div class="work-row__meta">
+          <div class="tag-row">
+            @for (tech of item.stack; track tech) {
+              <span class="tag">{{ tech }}</span>
+            }
+          </div>
+          <p class="mono work-row__highlight" [class.is-quiet]="item.underNda">
+            {{ item.highlight }}
+          </p>
+        </div>
+      </article>
+    }
+  </div>
+</section>
+
+<section class="two-col">
+  <div>
+    <div class="section-head">
+      <h2>Open source</h2>
+      <span class="mono open-source__repo">angular/angular</span>
+    </div>
+    <p class="sans two-col__intro">
+      I contribute to the Angular framework while working full time — mostly
+      documentation, accessibility and developer-experience work.
+      {{ profile.openSource.summary }}.
+    </p>
+    <div class="stack">
+      @for (pr of prs; track pr.url + pr.title) {
+        <div class="pr-row">
+          <span class="mono pr-row__date">{{ pr.mergedAt | date: 'MMM y' }}</span>
+          <a class="sans pr-row__title" [href]="pr.url">{{ pr.title }}</a>
+          <span class="mono pr-row__state">merged</span>
+        </div>
+      }
+    </div>
+    <a class="sans block__more" routerLink="/open-source">All contributions</a>
+  </div>
+
+  <div>
+    <div class="section-head">
+      <h2>Latest notes</h2>
+      <a class="sans" routerLink="/notes">Archive</a>
+    </div>
+    <div class="stack">
+      @for (note of notes; track note.slug) {
+        <a class="note-card" [routerLink]="['/notes', note.slug]">
+          <span class="label note-card__category">{{ note.category }}</span>
+          <span class="note-card__title">{{ note.title }}</span>
+          <span class="mono note-card__meta">
+            {{ note.readingTime }} min read &middot; {{ note.publishedAt | date: 'MMM y' }}
+          </span>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="cta__text">
+    <h2>Working on something large in Angular?</h2>
+    <p class="sans">
+      Architecture reviews, performance work, or a codebase that has grown
+      faster than its structure. Write to me and describe the problem — that is
+      enough to start.
+    </p>
+  </div>
+  <div class="cta__actions">
+    <a class="button" [href]="'mailto:' + profile.email">{{ profile.email }}</a>
+    <div class="sans cta__links">
+      <a [href]="profile.linkedin" rel="me">LinkedIn</a>
+      <a [href]="profile.github" rel="me">GitHub</a>
+    </div>
+  </div>
+</section>

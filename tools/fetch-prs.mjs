@@ -1,6 +1,6 @@
 /**
- * Fetches merged pull requests from GitHub and writes them into the app as a
- * typed TypeScript file.
+ * Fetches open-source contribution data from GitHub and writes it into the app
+ * as a typed TypeScript file.
  *
  * Runs at BUILD time, never in a visitor's browser. The site stays static, no
  * one waits on GitHub to read the page, and GitHub's rate limits can never
@@ -22,32 +22,58 @@ const REPOS = [
   { repo: 'angular/components', label: 'Angular Components', blurb: 'Material and the CDK — component behaviour and accessibility.' },
 ];
 
-/** How many recent PRs to list under each group. */
+/** How many recent pull requests to list under each group. */
 const SHOW = 6;
 
 const OUT = 'apps/web/src/app/core/content/open-source.generated.ts';
 
-async function commitCount(repo) {
-  // Angular lands a lot of work by cherry-pick, which closes the pull request
-  // without GitHub marking it merged. Counting commits authored in the repo is
-  // the only count that reflects what actually shipped.
-  const url =
-    'https://api.github.com/search/commits?q=' +
-    encodeURIComponent(`repo:${repo} author:${AUTHOR}`) +
-    '&per_page=1';
-  const res = await fetch(url, { headers: headers() });
-  if (!res.ok) throw new Error(`${repo} commits: HTTP ${res.status}`);
-  const json = await res.json();
-  return json.total_count ?? 0;
-}
-
 function headers() {
   const h = { Accept: 'application/vnd.github+json', 'User-Agent': AUTHOR + '-portfolio' };
+  // optional: lifts the rate limit, never required
   if (process.env.GITHUB_TOKEN) h.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
   return h;
 }
 
-async function search(repo) {
+/**
+ * Reads the same data as the repository's contributors graph
+ * (github.com/<repo>/graphs/contributors): where the author ranks, and how many
+ * commits they have on the default branch.
+ *
+ * This is the honest count. Angular's caretakers land a lot of work by
+ * cherry-pick, which CLOSES the pull request without GitHub marking it
+ * "merged", so counting merged PRs understates it badly.
+ */
+async function contributorStanding(repo) {
+  let position = null;
+  let commits = 0;
+  let scanned = 0;
+
+  // the API returns contributors ordered by commit count, 100 per page
+  for (let page = 1; page <= 5; page++) {
+    const res = await fetch(
+      `https://api.github.com/repos/${repo}/contributors?per_page=100&page=${page}`,
+      { headers: headers() },
+    );
+    if (!res.ok) throw new Error(`${repo} contributors: HTTP ${res.status}`);
+
+    const list = await res.json();
+    if (!Array.isArray(list) || list.length === 0) break;
+
+    for (const c of list) {
+      scanned++;
+      if (c.login?.toLowerCase() === AUTHOR.toLowerCase()) {
+        position = scanned;
+        commits = c.contributions;
+      }
+    }
+    if (list.length < 100) break;
+  }
+
+  return { rank: position, commits, contributorsListed: scanned };
+}
+
+/** Recent merged pull requests, used as examples of the work. */
+async function recentPrs(repo) {
   const q = `is:pr author:${AUTHOR} is:merged repo:${repo}`;
   const url =
     'https://api.github.com/search/issues?q=' +
@@ -55,13 +81,12 @@ async function search(repo) {
     `&sort=created&order=desc&per_page=${SHOW * 3}`;
 
   const res = await fetch(url, { headers: headers() });
-  if (!res.ok) throw new Error(`${repo}: HTTP ${res.status}`);
-
+  if (!res.ok) throw new Error(`${repo} prs: HTTP ${res.status}`);
   const json = await res.json();
 
-  // GitHub's search sorts by when a PR was opened. We show when it was
-  // MERGED, and those orders differ — a PR opened in March can merge after
-  // one opened in April. So over-fetch, re-sort by merge date, then trim.
+  // GitHub's search sorts by when a PR was opened. We show when it was MERGED,
+  // and those orders differ — a PR opened in March can merge after one opened
+  // in April. So over-fetch, re-sort by merge date, then trim.
   const prs = (json.items ?? [])
     .map((i) => ({
       number: i.number,
@@ -73,7 +98,7 @@ async function search(repo) {
     .sort((a, b) => b.mergedAt.localeCompare(a.mergedAt))
     .slice(0, SHOW);
 
-  return { total: json.total_count, prs };
+  return { mergedPrs: json.total_count ?? 0, prs };
 }
 
 function render(groups, total) {
@@ -91,19 +116,33 @@ export const openSourceUpdatedAt = '${stamp}';
 `;
 }
 
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
 try {
   const groups = [];
   let total = 0;
 
   for (const meta of REPOS) {
-    const { total: mergedPrs, prs } = await search(meta.repo);
-    await new Promise((r) => setTimeout(r, 2000));
-    const commits = await commitCount(meta.repo);
-    total += commits;
-    groups.push({ repo: meta.repo, label: meta.label, blurb: meta.blurb, commits, mergedPrs, prs });
-    console.log(`  ${meta.repo}: ${commits} commits (${mergedPrs} PRs marked merged)`);
-    // the search API is rate limited; be polite between calls
-    await new Promise((r) => setTimeout(r, 2000));
+    const standing = await contributorStanding(meta.repo);
+    await wait(1500);
+    const { mergedPrs, prs } = await recentPrs(meta.repo);
+    await wait(1500);
+
+    total += standing.commits;
+    groups.push({
+      repo: meta.repo,
+      label: meta.label,
+      blurb: meta.blurb,
+      commits: standing.commits,
+      rank: standing.rank,
+      contributorsListed: standing.contributorsListed,
+      mergedPrs,
+      prs,
+    });
+
+    console.log(
+      `  ${meta.repo}: #${standing.rank} · ${standing.commits} commits (${mergedPrs} PRs marked merged)`,
+    );
   }
 
   writeFileSync(OUT, render(groups, total));
@@ -111,9 +150,9 @@ try {
 } catch (err) {
   console.warn(`  GitHub fetch failed (${err.message}).`);
   if (existsSync(OUT)) {
-    console.warn('  Keeping the committed list so the build still succeeds.');
+    console.warn('  Keeping the committed data so the build still succeeds.');
   } else {
-    console.error('  No committed list to fall back on.');
+    console.error('  No committed data to fall back on.');
     process.exit(1);
   }
 }

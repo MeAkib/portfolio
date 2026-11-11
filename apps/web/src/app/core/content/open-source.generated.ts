@@ -10,6 +10,8 @@ export const openSourceGroups: OpenSourceGroup[] = [
     "label": "Angular",
     "blurb": "The framework itself — documentation, accessibility and developer experience.",
     "commits": 243,
+    "rank": 36,
+    "contributorsListed": 371,
     "mergedPrs": 176,
     "prs": [
       {
@@ -55,6 +57,8 @@ export const openSourceGroups: OpenSourceGroup[] = [
     "label": "Angular CLI",
     "blurb": "The build and tooling side: the CLI, schematics and the build system.",
     "commits": 54,
+    "rank": 19,
+    "contributorsListed": 412,
     "mergedPrs": 51,
     "prs": [
       {
@@ -100,6 +104,8 @@ export const openSourceGroups: OpenSourceGroup[] = [
     "label": "Angular Components",
     "blurb": "Material and the CDK — component behaviour and accessibility.",
     "commits": 29,
+    "rank": 30,
+    "contributorsListed": 421,
     "mergedPrs": 29,
     "prs": [
       {

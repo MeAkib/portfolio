@@ -16,7 +16,7 @@
       </div>
       <div class="facts__row">
         <dt>Angular &middot; open source</dt>
-        <dd>{{ totalCommits }} commits across three Angular repositories</dd>
+        <dd>{{ totalCommits }} commits across three repositories &middot; ranked #{{ bestRank }} in {{ bestRankRepo }}</dd>
       </div>
     </dl>
     <div class="hero__links">
@@ -137,9 +137,14 @@
         <header class="repo__head">
           <div class="repo__title">
             <h3>{{ group.label }}</h3>
-            <a class="mono repo__slug" [href]="'https://github.com/' + group.repo">{{ group.repo }}</a>
+            <a class="mono repo__slug" [href]="'https://github.com/' + group.repo + '/graphs/contributors?all=1'">{{ group.repo }}</a>
           </div>
-          <p class="mono repo__count">{{ group.commits }} commits</p>
+          <p class="mono repo__count">
+            @if (group.rank) {
+              <span class="repo__rank">#{{ group.rank }}</span>
+            }
+            {{ group.commits }} commits
+          </p>
         </header>
 
         <p class="sans repo__blurb">{{ group.blurb }}</p>
@@ -162,11 +167,12 @@
 
   <div class="block__note sans">
     <p>
-      The counts are commits authored in each repository, not pull requests.
-      Angular's caretakers land a lot of work by cherry-pick, which closes the
-      pull request without GitHub marking it merged — so a merged-PR count
-      understates it. By that narrower measure the numbers would be
-      {{ mergedPrTotal }} rather than {{ totalCommits }}.
+      Ranks and commit counts are the ones on each repository's contributors
+      graph, linked above. They count commits on the default branch rather
+      than pull requests: Angular's caretakers land a lot of work by
+      cherry-pick, which closes the pull request without GitHub marking it
+      merged, so a merged-PR count understates it — {{ mergedPrTotal }} rather
+      than {{ totalCommits }}.
     </p>
     <p>
       The list is generated at build time by a script in this repository, not

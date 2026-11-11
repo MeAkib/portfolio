@@ -24,6 +24,13 @@ export interface OpenSourceGroup {
    * authored is what actually shipped.
    */
   commits: number;
+  /**
+   * Where the author sits in this repository's contributors graph —
+   * github.com/<repo>/graphs/contributors. 1 is the top contributor.
+   */
+  rank: number | null;
+  /** How many contributors the ranking was taken from. */
+  contributorsListed: number;
   /** PRs GitHub marks merged. Kept for context; always lower than `commits`. */
   mergedPrs: number;
   /** The most recent few merged PRs, newest first, as examples. */

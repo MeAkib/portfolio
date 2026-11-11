@@ -128,3 +128,9 @@
   .focus { grid-template-columns: 1fr; }
   .focus__item + .focus__item { border-left: 0; padding-left: 0; border-top: 1px solid var(--rule); }
 }
+
+.repo__rank {
+  color: var(--ink);
+  font-weight: 500;
+  padding-right: 2px;
+}

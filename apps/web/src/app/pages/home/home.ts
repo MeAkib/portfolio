@@ -30,6 +30,13 @@ export class Home {
   );
   protected readonly prsUpdatedAt = openSourceUpdatedAt;
 
+  /** The strongest standing of the three, for the one line in the hero. */
+  private readonly best = [...openSourceGroups]
+    .filter((g) => g.rank !== null)
+    .sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity))[0];
+  protected readonly bestRank = this.best?.rank ?? null;
+  protected readonly bestRankRepo = this.best?.label ?? '';
+
   constructor() {
     inject(SeoService).set({
       title: profile.name,

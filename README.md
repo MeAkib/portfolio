@@ -65,11 +65,19 @@ and nothing to load.
 
 ## The open-source list
 
-`tools/fetch-prs.mjs` asks GitHub for merged pull requests in three
-repositories — `angular/angular`, `angular/angular-cli` and
-`angular/components` — and writes them into
-`core/content/open-source.generated.ts`. The three are shown as separate
-groups, each with its own total.
+`tools/fetch-prs.mjs` reads the same data as each repository's contributors
+graph (`github.com/<repo>/graphs/contributors?all=1`) for
+`angular/angular`, `angular/angular-cli` and `angular/components`, and writes
+it into `core/content/open-source.generated.ts`. The three are shown as
+separate groups, each with its own rank and commit count, plus the most recent
+merged pull requests as examples.
+
+**Why commits and not merged pull requests.** Angular's caretakers land a lot
+of contributions by cherry-pick, which closes the pull request without GitHub
+marking it "merged". Counting `is:merged` therefore undercounts badly — 256
+against 326 at the time of writing. The contributors graph counts commits on
+the default branch, which is what actually shipped, and it is the number
+anyone can verify on GitHub.
 
 This runs at **build time**, never in a visitor's browser. The page stays
 static, nobody waits on GitHub to read it, and GitHub's rate limits cannot

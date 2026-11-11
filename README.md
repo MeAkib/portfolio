@@ -23,50 +23,74 @@ pnpm dev        # http://localhost:4200
 | `pnpm dev` | Serve the site locally |
 | `pnpm build` | Build and prerender into `dist/apps/web/browser` |
 | `pnpm test` | Run the content tests |
+| `pnpm fetch:prs` | Refresh the merged-PR list from GitHub |
 | `pnpm lint` | Lint |
 
 ## Where things are
 
 ```
 apps/web/src/
-├── styles.css                 design tokens — every colour and size starts here
 ├── index.html
+├── styles.css                 design tokens — every colour and size starts here
 └── app/
-    ├── app.ts/html/css        the shell: header, router outlet, footer
-    ├── app.routes.ts          the routes
-    ├── app.routes.server.ts   how each route renders (all prerendered today)
+    ├── app.ts/html/css        the shell: header, anchor nav, footer
+    ├── app.routes.ts          one page, plus a 404
+    ├── app.routes.server.ts   how routes render (all prerendered)
     ├── core/
     │   ├── content/           ← THE FILES YOU EDIT
     │   │   ├── profile.ts     your name, role, links, focus areas
     │   │   ├── case-studies.ts
-    │   │   ├── posts.ts       articles
-    │   │   └── open-source.ts merged pull requests
-    │   ├── models/            the shapes those files must match
+    │   │   └── open-source.generated.ts   ← generated, do not hand-edit
+    │   ├── models/
     │   └── seo.service.ts     title, meta, canonical, JSON-LD
-    └── pages/                 one folder per page
+    └── pages/
+        ├── home/              the whole site: hero, work, open source, about, contact
+        └── not-found/
+
+tools/fetch-prs.mjs            pulls merged PRs from GitHub at build time
 ```
+
+It is one page. Sections are reached by anchor (`#work`, `#open-source`,
+`#about`, `#contact`), not by route, so there is nothing to navigate between
+and nothing to load.
 
 ## Editing the site
 
-Everything you will want to change is in `app/core/content/`.
+- **Your details, the hero, the focus strip** — `core/content/profile.ts`.
+- **Add a case study** — add an object to the array in `case-studies.ts`. Its
+  summary shows in the list and its `body` (plain HTML) sits behind a
+  "Read the full case study" toggle.
+- **Open source** — do not edit by hand. Run `pnpm fetch:prs`, or just
+  `pnpm build`, which runs it first.
 
-- **Your details, the hero, the focus strip** — `profile.ts`.
-- **Add a case study** — add an object to the array in `case-studies.ts`. The
-  list page, the detail page and the prerendered routes all pick it up.
-- **Add an article** — add an object to the array in `posts.ts`, newest first.
-- **Open-source list** — `open-source.ts`. Those rows are placeholders today;
-  replace them with your real merged PRs.
+## The open-source list
 
-`body` is plain HTML in both `case-studies.ts` and `posts.ts`. When the writing
-gets frequent this is the point to swap in a markdown pipeline — the page
-components will not need to change, only the file that feeds them.
+`tools/fetch-prs.mjs` asks GitHub for merged pull requests in three
+repositories — `angular/angular`, `angular/angular-cli` and
+`angular/components` — and writes them into
+`core/content/open-source.generated.ts`. The three are shown as separate
+groups, each with its own total.
+
+This runs at **build time**, never in a visitor's browser. The page stays
+static, nobody waits on GitHub to read it, and GitHub's rate limits cannot
+affect a visitor. If GitHub is unreachable the script keeps the committed list
+and exits cleanly, so an outage there can never fail a deploy.
+
+Set `GITHUB_TOKEN` to lift the API rate limit. It is optional — the script
+works without one.
+
+To refresh the list without changing anything else, run `pnpm fetch:prs` and
+commit the regenerated file. (A scheduled Vercel deploy would do the same
+automatically.)
+
 
 ## What the tests check
 
 `pnpm test` validates the content, not the code: unique url-safe slugs, no
-missing titles or descriptions, valid dates, no article updated before it was
-published, and posts in newest-first order. A content mistake fails the build
-instead of shipping a broken page.
+missing fields, the three repository groups present and separate, the group
+totals adding up, every PR link pointing at the repository it is filed under,
+and each group listed newest-merged first. That last one has already caught a
+real bug — GitHub search sorts by when a PR was opened, not when it merged.
 
 ## Rendering
 

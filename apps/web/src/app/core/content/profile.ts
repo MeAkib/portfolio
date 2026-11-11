@@ -25,11 +25,6 @@ export const profile = {
     since: 'February 2022',
   },
 
-  openSource: {
-    project: 'Angular',
-    summary: '150+ merged pull requests · ranked #47 contributor',
-  },
-
   /** The four-column strip under the hero. */
   focus: [
     {

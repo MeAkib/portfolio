@@ -4,9 +4,10 @@
   "license": "MIT",
   "scripts": {
     "dev": "nx serve web",
-    "build": "nx build web",
+    "build": "node tools/fetch-prs.mjs && nx build web",
     "test": "nx test web",
-    "lint": "nx lint web"
+    "lint": "nx lint web",
+    "fetch:prs": "node tools/fetch-prs.mjs"
   },
   "private": true,
   "dependencies": {

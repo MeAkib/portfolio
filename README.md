@@ -93,3 +93,17 @@ cannot happen again without failing the build.
 ## Deployment
 
 Build with `pnpm build` and serve `dist/apps/web/browser` as static files.
+
+## Deploying to Vercel
+
+`vercel.json` states every setting explicitly because Vercel's Angular preset
+does not fit an Nx workspace: the preset runs `ng build` and looks for
+`dist/<project>/browser`, while this repo builds with `pnpm build` and
+prerenders into `dist/apps/web/browser`. Setting `framework` to `null` turns
+the preset off.
+
+Note that `vercel.json` is strict JSON — it rejects `//` comment keys with a
+schema error before the build even starts. Keep explanations in this file.
+
+The deployment is plain static hosting. No serverless function is created,
+because every route is prerendered at build time.

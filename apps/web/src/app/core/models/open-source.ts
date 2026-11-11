@@ -1,4 +1,4 @@
-/** One merged pull request. */
+/** One pull request, shown as an example of the work. */
 export interface OpenSourcePr {
   number: number;
   title: string;
@@ -15,8 +15,17 @@ export interface OpenSourceGroup {
   label: string;
   /** One line explaining what the work in this repo is. */
   blurb: string;
-  /** Total merged PRs in this repo — not just the ones listed. */
-  merged: number;
-  /** The most recent few, newest first. */
+  /**
+   * Commits authored in this repository that are on the default branch.
+   *
+   * This is the honest count. Angular's caretakers land many contributions by
+   * cherry-pick, which CLOSES the pull request without GitHub marking it
+   * "merged" — so a merged-PR count understates the work badly. Commits
+   * authored is what actually shipped.
+   */
+  commits: number;
+  /** PRs GitHub marks merged. Kept for context; always lower than `commits`. */
+  mergedPrs: number;
+  /** The most recent few merged PRs, newest first, as examples. */
   prs: OpenSourcePr[];
 }

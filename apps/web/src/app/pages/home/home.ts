@@ -21,7 +21,13 @@ export class Home {
   protected readonly work = caseStudies;
 
   protected readonly groups = openSourceGroups;
-  protected readonly totalMerged = openSourceTotal;
+  /** Commits authored across all three repositories. */
+  protected readonly totalCommits = openSourceTotal;
+  /** The narrower "PRs GitHub marks merged" figure, for the footnote. */
+  protected readonly mergedPrTotal = openSourceGroups.reduce(
+    (n, g) => n + g.mergedPrs,
+    0,
+  );
   protected readonly prsUpdatedAt = openSourceUpdatedAt;
 
   constructor() {

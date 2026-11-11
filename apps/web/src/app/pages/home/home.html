@@ -16,7 +16,7 @@
       </div>
       <div class="facts__row">
         <dt>Angular &middot; open source</dt>
-        <dd>{{ totalMerged }} merged pull requests across three repositories</dd>
+        <dd>{{ totalCommits }} commits across three Angular repositories</dd>
       </div>
     </dl>
     <div class="hero__links">
@@ -34,6 +34,49 @@
       <p class="sans focus__detail">{{ item.detail }}</p>
     </div>
   }
+</section>
+
+<!-- ============================ about ============================ -->
+<section class="block two-col" id="about">
+  <div>
+    <div class="section-head">
+      <h2>About</h2>
+    </div>
+    <div class="prose about__body">
+      <p>{{ profile.summary }}</p>
+      <p>
+        Most of my work sits in the same place: an Angular codebase that has
+        grown past the point where one person can hold it in their head.
+        Multi-tenant billing, enterprise data tools, shared component libraries.
+        The problems are rarely exotic — they are boundaries, bundle size,
+        permissions, and keeping two teams meaning the same thing by the same
+        word.
+      </p>
+      <p>
+        Before Brain Station 23 I spent two years as a remote frontend developer
+        for a studio in Miyazaki, Japan, and started out converting designs to
+        HTML at an agency in Dhaka. The through line is the same: take something
+        someone drew, and make it work at the sizes and speeds real people use.
+      </p>
+    </div>
+  </div>
+
+  <aside class="about__side">
+    <div class="about__block">
+      <p class="label">Tools I reach for</p>
+      <p class="sans">
+        Angular, TypeScript, RxJS, Nx, Ng Zorro, Angular Material, SCSS,
+        Node.js, Azure DevOps, Figma.
+      </p>
+    </div>
+    <div class="about__block">
+      <p class="label">Elsewhere</p>
+      <div class="sans about__links">
+        <a [href]="profile.linkedin" rel="me">LinkedIn</a>
+        <a [href]="profile.github" rel="me">GitHub</a>
+      </div>
+    </div>
+  </aside>
 </section>
 
 <!-- ============================ work ============================ -->
@@ -79,7 +122,7 @@
 <section class="block" id="open-source">
   <div class="section-head">
     <h2>Open source</h2>
-    <span class="mono section-head__note">{{ totalMerged }} merged &middot; updated {{ prsUpdatedAt | date: 'd MMM y' }}</span>
+    <span class="mono section-head__note">{{ totalCommits }} commits &middot; updated {{ prsUpdatedAt | date: 'd MMM y' }}</span>
   </div>
 
   <p class="sans block__intro">
@@ -96,7 +139,7 @@
             <h3>{{ group.label }}</h3>
             <a class="mono repo__slug" [href]="'https://github.com/' + group.repo">{{ group.repo }}</a>
           </div>
-          <p class="mono repo__count">{{ group.merged }} merged</p>
+          <p class="mono repo__count">{{ group.commits }} commits</p>
         </header>
 
         <p class="sans repo__blurb">{{ group.blurb }}</p>
@@ -111,60 +154,26 @@
         </ol>
 
         <a class="sans repo__all" [href]="'https://github.com/' + group.repo + '/pulls?q=is%3Apr+author%3AMeAkib+is%3Amerged'">
-          All {{ group.merged }} in {{ group.label }}
+          All pull requests in {{ group.label }}
         </a>
       </section>
     }
   </div>
 
-  <p class="sans block__note">
-    This list is generated at build time by a script in the repository, not
-    fetched from GitHub while you read. A visitor never waits on the GitHub API,
-    and an outage there cannot break a page here.
-  </p>
-</section>
-
-<!-- ============================ about ============================ -->
-<section class="block two-col" id="about">
-  <div>
-    <div class="section-head">
-      <h2>About</h2>
-    </div>
-    <div class="prose about__body">
-      <p>{{ profile.summary }}</p>
-      <p>
-        Most of my work sits in the same place: an Angular codebase that has
-        grown past the point where one person can hold it in their head.
-        Multi-tenant billing, enterprise data tools, shared component libraries.
-        The problems are rarely exotic — they are boundaries, bundle size,
-        permissions, and keeping two teams meaning the same thing by the same
-        word.
-      </p>
-      <p>
-        Before Brain Station 23 I spent two years as a remote frontend developer
-        for a studio in Miyazaki, Japan, and started out converting designs to
-        HTML at an agency in Dhaka. The through line is the same: take something
-        someone drew, and make it work at the sizes and speeds real people use.
-      </p>
-    </div>
+  <div class="block__note sans">
+    <p>
+      The counts are commits authored in each repository, not pull requests.
+      Angular's caretakers land a lot of work by cherry-pick, which closes the
+      pull request without GitHub marking it merged — so a merged-PR count
+      understates it. By that narrower measure the numbers would be
+      {{ mergedPrTotal }} rather than {{ totalCommits }}.
+    </p>
+    <p>
+      The list is generated at build time by a script in this repository, not
+      fetched while you read. A visitor never waits on the GitHub API, and an
+      outage there cannot break a page here.
+    </p>
   </div>
-
-  <aside class="about__side">
-    <div class="about__block">
-      <p class="label">Tools I reach for</p>
-      <p class="sans">
-        Angular, TypeScript, RxJS, Nx, Ng Zorro, Angular Material, SCSS,
-        Node.js, Azure DevOps, Figma.
-      </p>
-    </div>
-    <div class="about__block">
-      <p class="label">Elsewhere</p>
-      <div class="sans about__links">
-        <a [href]="profile.linkedin" rel="me">LinkedIn</a>
-        <a [href]="profile.github" rel="me">GitHub</a>
-      </div>
-    </div>
-  </aside>
 </section>
 
 <!-- =========================== contact =========================== -->

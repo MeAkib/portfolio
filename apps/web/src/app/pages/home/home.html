@@ -1,0 +1,202 @@
+<!-- ============================ hero ============================ -->
+<section class="hero" id="top">
+  <div class="hero__main">
+    <p class="label">{{ profile.role }} &middot; {{ profile.location }}</p>
+    <h1>{{ profile.name }}</h1>
+    <p class="hero__specialism">{{ profile.specialism }}</p>
+    <p class="hero__summary">{{ profile.summary }}</p>
+  </div>
+
+  <aside class="hero__aside">
+    <p class="label">Currently</p>
+    <dl class="facts">
+      <div class="facts__row">
+        <dt>{{ profile.current.company }}</dt>
+        <dd>{{ profile.current.title }} &middot; since {{ profile.current.since }}</dd>
+      </div>
+      <div class="facts__row">
+        <dt>Angular &middot; open source</dt>
+        <dd>{{ totalCommits }} commits across three repositories &middot; ranked #{{ bestRank }} in {{ bestRankRepo }}</dd>
+      </div>
+    </dl>
+    <div class="hero__links">
+      <a class="button" [href]="'mailto:' + profile.email">{{ profile.email }}</a>
+      <a class="button button--quiet" [href]="profile.github" rel="me">GitHub</a>
+    </div>
+  </aside>
+</section>
+
+<!-- ============================ focus ============================ -->
+<section class="focus">
+  @for (item of profile.focus; track item.title) {
+    <div class="focus__item">
+      <p class="label">{{ item.title }}</p>
+      <p class="sans focus__detail">{{ item.detail }}</p>
+    </div>
+  }
+</section>
+
+<!-- ============================ about ============================ -->
+<section class="block two-col" id="about">
+  <div>
+    <div class="section-head">
+      <h2>About</h2>
+    </div>
+    <div class="prose about__body">
+      <p>{{ profile.summary }}</p>
+      <p>
+        Most of my work sits in the same place: an Angular codebase that has
+        grown past the point where one person can hold it in their head.
+        Multi-tenant billing, enterprise data tools, shared component libraries.
+        The problems are rarely exotic — they are boundaries, bundle size,
+        permissions, and keeping two teams meaning the same thing by the same
+        word.
+      </p>
+      <p>
+        Before Brain Station 23 I spent two years as a remote frontend developer
+        for a studio in Miyazaki, Japan, and started out converting designs to
+        HTML at an agency in Dhaka. The through line is the same: take something
+        someone drew, and make it work at the sizes and speeds real people use.
+      </p>
+    </div>
+  </div>
+
+  <aside class="about__side">
+    <div class="about__block">
+      <p class="label">Tools I reach for</p>
+      <p class="sans">
+        Angular, TypeScript, RxJS, Nx, Ng Zorro, Angular Material, SCSS,
+        Node.js, Azure DevOps, Figma.
+      </p>
+    </div>
+    <div class="about__block">
+      <p class="label">Elsewhere</p>
+      <div class="sans about__links">
+        <a [href]="profile.linkedin" rel="me">LinkedIn</a>
+        <a [href]="profile.github" rel="me">GitHub</a>
+      </div>
+    </div>
+  </aside>
+</section>
+
+<!-- ============================ work ============================ -->
+<section class="block" id="work">
+  <div class="section-head">
+    <h2>Selected work</h2>
+    <span class="mono section-head__note">{{ work.length }} case studies</span>
+  </div>
+
+  <div class="stack">
+    @for (item of work; track item.slug) {
+      <article class="work">
+        <div class="work__meta">
+          <p class="mono work__period">{{ item.period }}</p>
+          <p class="sans work__company">{{ item.company }}</p>
+        </div>
+
+        <div class="work__main">
+          <h3>{{ item.title }}</h3>
+          <p class="sans work__summary">{{ item.summary }}</p>
+
+          <div class="tag-row">
+            @for (tech of item.stack; track tech) {
+              <span class="tag">{{ tech }}</span>
+            }
+          </div>
+
+          @if (item.underNda) {
+            <p class="mono work__nda">Client under NDA &middot; described by approach only</p>
+          }
+
+          <details class="work__details">
+            <summary><span>Read the full case study</span></summary>
+            <div class="prose" [innerHTML]="item.body"></div>
+          </details>
+        </div>
+      </article>
+    }
+  </div>
+</section>
+
+<!-- ========================= open source ========================= -->
+<section class="block" id="open-source">
+  <div class="section-head">
+    <h2>Open source</h2>
+    <span class="mono section-head__note">{{ totalCommits }} commits &middot; updated {{ prsUpdatedAt | date: 'd MMM y' }}</span>
+  </div>
+
+  <p class="sans block__intro">
+    I contribute to Angular while working full time. The work splits across
+    three repositories, and it is mostly documentation, accessibility and
+    developer experience rather than framework internals.
+  </p>
+
+  <div class="repos">
+    @for (group of groups; track group.repo) {
+      <section class="repo">
+        <header class="repo__head">
+          <div class="repo__title">
+            <h3>{{ group.label }}</h3>
+            <a class="mono repo__slug" [href]="'https://github.com/' + group.repo + '/graphs/contributors?all=1'">{{ group.repo }}</a>
+          </div>
+          <p class="mono repo__count">
+            @if (group.rank) {
+              <span class="repo__rank">#{{ group.rank }}</span>
+            }
+            {{ group.commits }} commits
+          </p>
+        </header>
+
+        <p class="sans repo__blurb">{{ group.blurb }}</p>
+
+        <ol class="pr-list">
+          @for (pr of group.prs; track pr.number) {
+            <li class="pr">
+              <a class="sans pr__title" [href]="pr.url">{{ pr.title }}</a>
+              <span class="mono pr__meta">#{{ pr.number }} &middot; {{ pr.mergedAt | date: 'MMM y' }}</span>
+            </li>
+          }
+        </ol>
+
+        <a class="sans repo__all" [href]="'https://github.com/' + group.repo + '/pulls?q=is%3Apr+author%3AMeAkib+is%3Amerged'">
+          All pull requests in {{ group.label }}
+        </a>
+      </section>
+    }
+  </div>
+
+  <div class="block__note sans">
+    <p>
+      Ranks and commit counts are the ones on each repository's contributors
+      graph, linked above. They count commits on the default branch rather
+      than pull requests: Angular's caretakers land a lot of work by
+      cherry-pick, which closes the pull request without GitHub marking it
+      merged, so a merged-PR count understates it — {{ mergedPrTotal }} rather
+      than {{ totalCommits }}.
+    </p>
+    <p>
+      The list is generated at build time by a script in this repository, not
+      fetched while you read. A visitor never waits on the GitHub API, and an
+      outage there cannot break a page here.
+    </p>
+  </div>
+</section>
+
+<!-- =========================== contact =========================== -->
+<section class="cta" id="contact">
+  <div class="cta__text">
+    <h2>Working on something large in Angular?</h2>
+    <p class="sans">
+      Architecture reviews, performance work, or a codebase that has grown
+      faster than its structure. Write to me and describe the problem — that is
+      enough to start.
+    </p>
+  </div>
+  <div class="cta__actions">
+    <a class="button" [href]="'mailto:' + profile.email">{{ profile.email }}</a>
+    <div class="sans cta__links">
+      <a [href]="profile.linkedin" rel="me">LinkedIn</a>
+      <a [href]="profile.github" rel="me">GitHub</a>
+    </div>
+  </div>
+</section>

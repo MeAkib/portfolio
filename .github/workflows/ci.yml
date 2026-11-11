@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Works out what actually changed, so unrelated projects are skipped.
+      - uses: nrwl/nx-set-shas@v4
+
+      - run: pnpm exec nx affected -t lint test build
+
+      # The old site shipped a page that said "Loading" to search engines.
+      # This makes that impossible to ship again.
+      - name: Prerendered HTML must contain real content
+        run: |
+          pnpm exec nx build web
+          grep -q "I specialize in large Angular applications" dist/apps/web/browser/index.html
+          ! grep -qi ">Loading<" dist/apps/web/browser/index.html
